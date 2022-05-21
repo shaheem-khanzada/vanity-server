@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
@@ -18,5 +19,14 @@ export class AppController {
       return this.appService.generateVanityKey(network);
     }
     throw new HttpException('network required', HttpStatus.BAD_REQUEST);
+  }
+
+  @Get('generateAddress')
+  generateDesireAddress(@Body() body: any): any {
+    if (body) {
+      console.log('network', body);
+      return this.appService.generateDesireAddress(body);
+    }
+    throw new HttpException('body required', HttpStatus.BAD_REQUEST);
   }
 }
