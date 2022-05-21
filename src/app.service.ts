@@ -54,9 +54,9 @@ export class AppService {
         '/home/vanitygen-plusplus/vanitygen++',
         ['-C', body.network, '-P', body.publicKey, body.needle],
       );
-      const keys = normalizeGenerateResults(data.toString());
-      console.log('keys', keys);
-      return keys;
+      // const keys = normalizeGenerateResults(data.toString());
+      console.log('keys', data.toString());
+      return data.toString();
     } catch (e) {
       console.log('Error generateDesireAddress', e);
       throw new HttpException(e.message || 'Error', HttpStatus.BAD_REQUEST);
