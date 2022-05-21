@@ -6,7 +6,6 @@ import { GenerateKey } from './interfaces/generate.interface';
 @Injectable()
 export class AppService {
   async spawnAsync(command: string, args: string[]) {
-    try {
       const child = spawn(command, args);
 
       let data = '';
@@ -30,9 +29,6 @@ export class AppService {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
       }
       return data;
-    } catch (e) {
-      throw e;
-    }
   }
 
   async generateVanityKey(network: string): Promise<GenerateKey> {
