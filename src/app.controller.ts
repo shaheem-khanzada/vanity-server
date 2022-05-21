@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Post,
   Query,
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -21,7 +22,7 @@ export class AppController {
     throw new HttpException('network required', HttpStatus.BAD_REQUEST);
   }
 
-  @Get('generateAddress')
+  @Post('generateAddress')
   generateDesireAddress(@Body() body: any): any {
     if (body) {
       console.log('network', body);
