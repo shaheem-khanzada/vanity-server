@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { spawnSync, spawn } from 'child_process';
-import normalizeGenerateResults from './helper/normalizeGenerateResults';
+import normalizeGenerateResults, { normalizeAddressResults } from './helper/normalizeGenerateResults';
 import { GenerateKey } from './interfaces/generate.interface';
 
 @Injectable()
@@ -54,9 +54,9 @@ export class AppService {
         '/home/vanitygen-plusplus/vanitygen++',
         ['-C', body.network, '-P', body.publicKey, body.needle],
       );
-      // const keys = normalizeGenerateResults(data.toString());
-      console.log('keys', data.toString());
-      return data.toString();
+      const keys = normalizeAddressResults(data.toString());
+      console.log('keys', keys);
+      return keys;
     } catch (e) {
       console.log('Error generateDesireAddress', e);
       throw new HttpException(e.message || 'Error', HttpStatus.BAD_REQUEST);
