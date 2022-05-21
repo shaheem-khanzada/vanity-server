@@ -23,7 +23,7 @@ export class AppService {
         child.on('close', resolve);
       });
 
-      if (exitCode || error) {
+      if (exitCode) {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
       }
       return data;
@@ -60,7 +60,7 @@ export class AppService {
       return keys;
     } catch (e) {
       console.log('Error generateDesireAddress', e);
-      throw new HttpException('body required', HttpStatus.BAD_REQUEST);
+      throw new HttpException(e.message || 'Error', HttpStatus.BAD_REQUEST);
     }
   }
 }
