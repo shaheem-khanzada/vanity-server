@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { spawnSync, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import normalizeGenerateResults, { normalizeAddressResults } from './helper/normalizeGenerateResults';
 import { GenerateKey } from './interfaces/generate.interface';
 

@@ -23,6 +23,8 @@ export const normalizeAddressResults = (stdout: string) => {
   stdout = stdout.replaceAll('DOGE', '');
   const regex = /Pattern:\s+(\w+)\nAddress:\s+(\w+)\nPrivkeyPart:\s+(\w+)/g;
   const match = regex.exec(stdout);
+  console.log("match", match);
+  console.log("match stdout", stdout);
   if (match) {
     const result = {
       pattern: match[1],  
@@ -31,4 +33,5 @@ export const normalizeAddressResults = (stdout: string) => {
     }
     return result;
   }
+  throw new HttpException('Unable to generate key', HttpStatus.EXPECTATION_FAILED)
 }
