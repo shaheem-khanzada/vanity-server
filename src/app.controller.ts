@@ -24,10 +24,11 @@ export class AppController {
 
   @Post('generateAddress')
   generateDesireAddress(@Body() body: any): any {
-    if (body) {
+    if (Object.keys(body || {}).length) {
       console.log('network', body);
       return this.appService.generateDesireAddress(body);
+    } else {
+      throw new HttpException('body required', HttpStatus.BAD_REQUEST);
     }
-    throw new HttpException('body required', HttpStatus.BAD_REQUEST);
   }
 }
