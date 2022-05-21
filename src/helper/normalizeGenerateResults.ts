@@ -2,8 +2,8 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { GenerateKey } from "src/interfaces/generate.interface";
 
 export default (stdout: string): GenerateKey => {
-    const regix = /Pubkey \(.*?\):\s+(\w+)\nPrivkey \(.*?\):\s+(\w+)\nAddress:\s+(\w+)\nPrivkey:\s+(\w+)/g;
-    const match = regix.exec(stdout);
+    const regex = /Pubkey \(.*?\):\s+(\w+)\nPrivkey \(.*?\):\s+(\w+)\nAddress:\s+(\w+)\nPrivkey:\s+(\w+)/g;
+    const match = regex.exec(stdout);
     if (match) {
       const result: GenerateKey = {
         publicKeyHex: match[1],
@@ -14,4 +14,21 @@ export default (stdout: string): GenerateKey => {
       return result;
     }
     throw new HttpException('Unable to generate key', HttpStatus.EXPECTATION_FAILED)
+}
+
+export const normalizeAddressResults = (stdout: string) => {
+  stdout = stdout.replaceAll('ETH', '');
+  stdout = stdout.replaceAll('BTC', '');
+  stdout = stdout.replaceAll('LTC', '');
+  stdout = stdout.replaceAll('DOGE', '');
+  const regex = /Pattern:\s+(\w+)\nAddress:\s+(\w+)\nPrivkeyPart:\s+(\w+)/g;
+  const match = regex.exec(stdout);
+  if (match) {
+    const result = {
+      pattern: match[1],  
+      address: match[2],
+      privkeyPart: match[3]
+    }
+    return result;
+  }
 }
