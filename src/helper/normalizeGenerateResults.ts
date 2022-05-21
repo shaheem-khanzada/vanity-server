@@ -17,10 +17,10 @@ export default (stdout: string): GenerateKey => {
 }
 
 export const normalizeAddressResults = (stdout: string) => {
-  stdout = stdout.replaceAll('ETH', '');
-  stdout = stdout.replaceAll('BTC', '');
-  stdout = stdout.replaceAll('LTC', '');
-  stdout = stdout.replaceAll('DOGE', '');
+  stdout = stdout.replaceAll('ETH ', '');
+  stdout = stdout.replaceAll('BTC ', '');
+  stdout = stdout.replaceAll('LTC ', '');
+  stdout = stdout.replaceAll('DOGE ', '');
   stdout = stdout.replaceAll('Generating  Address', '');
   const regex = /Pattern:\s+(\w+)\nAddress:\s+(\w+)\nPrivkeyPart:\s+(\w+)/g;
   const match = regex.exec(stdout);
