@@ -23,6 +23,9 @@ export class AppService {
         child.on('close', resolve);
       });
 
+      console.log("exitCode", exitCode)
+      console.log("error", error)
+
       if (exitCode) {
         throw new Error(`subprocess error exit ${exitCode}, ${error}`);
       }
