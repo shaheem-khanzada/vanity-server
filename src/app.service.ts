@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { spawn } from 'child_process';
-import normalizeGenerateResults, { normalizeAddressResults } from './helper/normalizeGenerateResults';
+import { normalizeAddressResults, normalizeMergeResults, normalizeVanityKeys } from './helper/normalizeGenerateResults';
 import { GenerateKey } from './interfaces/generate.interface';
+
+const baseUrl = '/home/vanitygen-plusplus';
 
 @Injectable()
 export class AppService {
   async spawnAsync(command: string, args: string[]) {
-      const child = spawn(command, args);
+      const child = spawn(`${baseUrl}/${command}`, args);
 
       let data = '';
       for await (const chunk of child.stdout) {
@@ -33,25 +35,25 @@ export class AppService {
 
   async generateVanityKey(network: string): Promise<GenerateKey> {
     try {
-      const data = await this.spawnAsync('/home/vanitygen-plusplus/keyconv', [
+      const data = await this.spawnAsync('keyconv', [
         '-C',
         network,
         '-G',
       ]);
       console.log("data", data);
-      const keys = normalizeGenerateResults(data.toString());
+      const keys = normalizeVanityKeys(data.toString());
       console.log('keys', keys);
       return keys;
     } catch (e) {
       console.log('Error generateVanityKey ', e);
-      throw new HttpException('body required', HttpStatus.BAD_REQUEST);
+      throw new HttpException(e.message || 'Error while generating vanity key', HttpStatus.BAD_REQUEST);
     }
   }
 
   async generateDesireAddress(body: any): Promise<any> {
     try {
       const data = await this.spawnAsync(
-        '/home/vanitygen-plusplus/vanitygen++',
+        'vanitygen++',
         ['-C', body.network, '-P', body.publicKey, body.needle],
       );
       const keys = normalizeAddressResults(data.toString());
@@ -59,7 +61,22 @@ export class AppService {
       return keys;
     } catch (e) {
       console.log('Error generateDesireAddress', e);
-      throw new HttpException(e.message || 'Error', HttpStatus.BAD_REQUEST);
+      throw new HttpException(e.message || 'Error while generating address', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async mergeKeys(body: any): Promise<any> {
+    try {
+      const data = await this.spawnAsync(
+        'keyconv',
+        [body.privkeyPart, body.privkeyKey],
+      );
+      const keys = normalizeMergeResults(data.toString());
+      console.log('keys', keys);
+      return keys;
+    } catch (e) {
+      console.log('Error generateDesireAddress', e);
+      throw new HttpException(e.message || 'Error while merge', HttpStatus.BAD_REQUEST);
     }
   }
 }

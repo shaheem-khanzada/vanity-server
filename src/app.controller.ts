@@ -13,7 +13,7 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('generate')
+  @Get('vanity')
   generateVanityKey(@Query('network') network: string): any {
     if (network) {
       console.log('network', network);
@@ -22,8 +22,13 @@ export class AppController {
     throw new HttpException('network required', HttpStatus.BAD_REQUEST);
   }
 
-  @Post('generateAddress')
+  @Post('vanity-address')
   generateDesireAddress(@Body() body: any): any {
     return this.appService.generateDesireAddress(body);
+  }
+
+  @Post('vanity-merge')
+  generateMergeKeys(@Body() body: any): any {
+    return this.appService.mergeKeys(body);
   }
 }
