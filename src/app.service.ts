@@ -69,7 +69,7 @@ export class AppService {
     try {
       const data = await this.spawnAsync(
         'keyconv',
-        [body.privkeyPart, body.privkeyKey],
+        [body.privkeyPart, body.vanityKey],
       );
       const keys = normalizeMergeResults(data.toString());
       console.log('keys', keys);
