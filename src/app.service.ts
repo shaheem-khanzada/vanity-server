@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import * as AWS from 'aws-sdk'
+// import * as AWS from 'aws-sdk'
 import { spawn } from 'child_process';
 import {
   normalizeAddressResults,
@@ -14,12 +14,12 @@ const baseUrl = '/home/vanitygen-plusplus';
 
 @Injectable()
 export class AppService {
-  s3Bucket: AWS.S3;
+  s3Bucket: any;
   constructor(private configService: ConfigService) {
-    this.s3Bucket = new AWS.S3({
-      accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
-    });
+    // this.s3Bucket = new AWS.S3({
+    //   accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
+    //   secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+    // });
   }
   async spawnAsync(command: string, args: string[]) {
     const child = spawn(`${baseUrl}/${command}`, args);
