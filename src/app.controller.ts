@@ -22,6 +22,11 @@ export class AppController {
     throw new HttpException('network required', HttpStatus.BAD_REQUEST);
   }
 
+  @Post('upload')
+  uploadMetaData(@Body() body: { tokenId: string, needle: string, rank: string }) {
+    return this.appService.uploadMetadata(body);
+  }
+
   @Post('vanity-address')
   generateDesireAddress(@Body() body: any): any {
     return this.appService.generateDesireAddress(body);
