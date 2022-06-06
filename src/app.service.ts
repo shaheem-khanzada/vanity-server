@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-// import * as AWS from 'aws-sdk'
 import S3 from 'aws-sdk/clients/s3';
 
 import { spawn } from 'child_process';
@@ -10,7 +9,7 @@ import {
 } from './helper/normalizeGenerateResults';
 import { GenerateKey } from './interfaces/generate.interface';
 import { ConfigService } from '@nestjs/config';
-import modifyMetaData from './helper/metadata';
+import modifyMetaData, { convertTokeIdToVideoId, getIpfsBaseUrl } from './helper/metadata';
 
 const baseUrl = '/home/vanitygen-plusplus';
 
@@ -109,11 +108,13 @@ export class AppService {
 
   async uploadMetadata(body: { tokenId: string, needle: string, rank: string }) {
     try {
+      const ipfsBaseUrl = getIpfsBaseUrl(body);
       const params = {
         ContentType: 'application/json',
         Bucket: this.configService.get('AWS_BUCKET_NAME'),
         Key: `${body.tokenId}.json`,
         Body: modifyMetaData({
+          assetUrl: `${ipfsBaseUrl}/${convertTokeIdToVideoId(body)}.mp4`,
           tokenId: body.tokenId,
           needle: body.needle,
           rank: body.rank,
@@ -133,4 +134,9 @@ export class AppService {
       throw e;
     }
   }
+
+  async updateMetadata() {
+    
+  }
+
 }
