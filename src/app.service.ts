@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import S3 from 'aws-sdk/clients/s3';
-
+import { ethers, Contract } from 'ethers';
 import { spawn } from 'child_process';
 import {
   normalizeAddressResults,
@@ -9,7 +9,11 @@ import {
 } from './helper/normalizeGenerateResults';
 import { GenerateKey } from './interfaces/generate.interface';
 import { ConfigService } from '@nestjs/config';
-import modifyMetaData, { convertTokeIdToVideoId, getIpfsBaseUrl } from './helper/metadata';
+import modifyMetaData, {
+  convertTokeIdToVideoId,
+  getIpfsBaseUrl,
+} from './helper/metadata';
+import { ORIGINS_ABI, ORIGINS_ADDRESS } from './constants/abi';
 
 const baseUrl = '/home/vanitygen-plusplus';
 
@@ -106,7 +110,11 @@ export class AppService {
     }
   }
 
-  async uploadMetadata(body: { tokenId: string, needle: string, rank: string }) {
+  async uploadMetadata(body: {
+    tokenId: string;
+    needle: string;
+    rank: string;
+  }) {
     try {
       const ipfsBaseUrl = getIpfsBaseUrl(body);
       const params = {
@@ -124,19 +132,42 @@ export class AppService {
       return new Promise((resolve, reject) => {
         this.s3Bucket.upload(params, (error: any, data: any) => {
           if (error) {
-            reject(error)
+            console.log('error', error);
+            reject(error);
           }
           resolve(data);
-        })
-      })
-      
+          console.log('location', data.Location);
+        });
+      });
     } catch (e) {
       throw e;
     }
   }
 
   async updateMetadata() {
-    
+     try {
+      const provider = new ethers.providers.JsonRpcProvider(
+        'https://bsc-dataseed.binance.org',
+      );
+      const contract = new Contract(ORIGINS_ADDRESS, ORIGINS_ABI, provider);
+      const tokenId = await contract.tokensMinted();
+      for (let i = 1; i <= tokenId.toNumber(); i++) {
+        const nftId = i;
+        const needle = await contract.tokenNeedleMapping(nftId);
+        const weight = await contract.needlerMap(needle, nftId);
+        const payload = {
+          tokenId: nftId.toString(),
+          needle,
+          rank: (
+            (Math.log((1 * 10 ** 18) / weight) / Math.log(0.8)) * -1 +
+            1
+          ).toFixed(),
+        };
+        console.log(payload);
+        this.uploadMetadata(payload);
+      }
+     } catch (e) {
+       console.log('error updateMetadata updateMetadata', e);
+     }
   }
-
 }
