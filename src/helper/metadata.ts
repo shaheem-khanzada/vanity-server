@@ -1,11 +1,11 @@
-import { IPFS_VIDEO_BASE_URL_1, IPFS_VIDEO_BASE_URL_2 } from 'src/constants';
+import { IPFS_IMAGE_BASE_URL_1, IPFS_IMAGE_BASE_URL_2, IPFS_VIDEO_BASE_URL_1, IPFS_VIDEO_BASE_URL_2 } from 'src/constants';
 
-const modifyMetaData = ({ tokenId, needle, rank, assetUrl }) => {
+const modifyMetaData = ({ tokenId, needle, rank, assetUrl, image }) => {
   const metadata = {
     name: `Origins #${tokenId}`,
     description:
       "Vanity Origins is the collection of 500 unique realistic 3D rendered diamonds, all in 4k. Each diamond is made by hand without using any generator. There's a 1 in 500 chances of getting a special Purple Quartz Crystal, which will be rewarded with an IRL prize.",
-    image: assetUrl,
+    image: image,
     animation_type: assetUrl,
     attributes: [
       {
@@ -48,9 +48,16 @@ export const convertTokeIdToVideoId = ({ tokenId }) => {
   }
 };
 
-export const getIpfsBaseUrl = ({ tokenId }) => {
-  if (parseInt(tokenId) > 282) {
-    return IPFS_VIDEO_BASE_URL_2;
+export const getIpfsBaseUrl = ({ tokenId, type }) => {
+  if (type === 'video') {
+    if (parseInt(tokenId) > 282) {
+      return IPFS_VIDEO_BASE_URL_2;
+    }
+    return IPFS_VIDEO_BASE_URL_1;
+  } else if (type === 'image') {
+    if (parseInt(tokenId) > 282) {
+      return IPFS_IMAGE_BASE_URL_2;
+    }
+    return IPFS_IMAGE_BASE_URL_1;
   }
-  return IPFS_VIDEO_BASE_URL_1;
 };

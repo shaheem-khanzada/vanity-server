@@ -116,17 +116,21 @@ export class AppService {
     rank: string;
   }) {
     try {
-      const ipfsBaseUrl = getIpfsBaseUrl(body);
+      const ipfsVideoBaseUrl = getIpfsBaseUrl({ ...body, type: 'video' });
+      const ipfsImageBaseUrl = getIpfsBaseUrl({ ...body, type: 'image' });
+      const content = modifyMetaData({
+        assetUrl: `${ipfsVideoBaseUrl}/${convertTokeIdToVideoId(body)}.mp4`,
+        image: `${ipfsImageBaseUrl}/${convertTokeIdToVideoId(body)}.mp4`,
+        tokenId: body.tokenId,
+        needle: body.needle,
+        rank: body.rank,
+      });
+
       const params = {
         ContentType: 'application/json',
         Bucket: this.configService.get('AWS_BUCKET_NAME'),
         Key: `${body.tokenId}.json`,
-        Body: modifyMetaData({
-          assetUrl: `${ipfsBaseUrl}/${convertTokeIdToVideoId(body)}.mp4`,
-          tokenId: body.tokenId,
-          needle: body.needle,
-          rank: body.rank,
-        }),
+        Body: content,
       };
 
       return new Promise((resolve, reject) => {
@@ -145,7 +149,7 @@ export class AppService {
   }
 
   async updateMetadata() {
-     try {
+    try {
       const provider = new ethers.providers.JsonRpcProvider(
         'https://bsc-dataseed.binance.org',
       );
@@ -166,8 +170,8 @@ export class AppService {
         console.log(payload);
         this.uploadMetadata(payload);
       }
-     } catch (e) {
-       console.log('error updateMetadata updateMetadata', e);
-     }
+    } catch (e) {
+      console.log('error updateMetadata updateMetadata', e);
+    }
   }
 }
